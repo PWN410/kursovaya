@@ -17,6 +17,28 @@ if ($result = $mysqli->query($query)) {
 
     $result->free();
 }
+$mysqli->close();
+?>
+
+<?php
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+$id = $array[0]["id"];
+$mysqli->query("UPDATE catalogtest SET Views = Views + 1 WHERE id = $id");
+
+$mysqli->close();
+?>
+<?php
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+$id = $array[0]["id"];
+$mysqli->query("UPDATE catalogtest SET Views = Views + 1 WHERE id = $id");
 
 $mysqli->close();
 ?>
@@ -157,6 +179,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				         <div class="grid_img">
 						   <div class="css3"><a href = "books/171987.a4.pdf"><img src="images/pic'.$array[0]["id"].'.jpg" alt=""/></a></div>
 	                    </div>
+	                    <h2>Просмотров: '.$array[0]["Views"].'</h2>
 	                    </div>
 	                    </div>
 </div>
