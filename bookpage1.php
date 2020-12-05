@@ -1,6 +1,7 @@
 <?php
 session_start();
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,17 +34,7 @@ $mysqli->query("UPDATE catalogtest SET Views = Views + 1 WHERE id = $id");
 
 $mysqli->close();
 ?>
-<?php
-$mysqli = new mysqli("localhost", "root", "", "readontest");
-if ($mysqli->connect_errno) {
-    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
-    exit();
-}
-$id = $array[0]["id"];
-$mysqli->query("UPDATE catalogtest SET Views = Views + 1 WHERE id = $id");
 
-$mysqli->close();
-?>
 <?php
 echo '
 <title>'.$array[0]["Name"].' - '.$array[0]["Author"].'</title>';
@@ -63,6 +54,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--webfont-->
 <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
 <!-- dropdown -->
+
 <script src="js/jquery.easydropdown.js"></script>
 <link href="css/nav.css" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" src="js/hover_pack.js"></script>
@@ -162,8 +154,46 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="clearfix"></div>
 			   </div>
 			   </div>
-			   <?php
-			   
+			   <?php 
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+$query = "SELECT * FROM users ORDER by ID";
+if ($result = $mysqli->query($query)) {
+	$users = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$users[]=$row;
+    }
+
+    $result->free();
+}
+$mysqli->close();
+for($i=0;$i<count($users);$i++)
+{
+	if($users[$i]["email"]==$_SESSION['email'])
+	{
+		$id_u = $users[$i]["id"];
+	}
+	else 
+		$id_u = 0;
+}
+?>
+<?php
+
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+
+$id_b = $array[0]["id"];
+$mysqli->query("INSERT INTO `cab` (`id_user`, `id_book`, `read_now`, `read_later`, `was_read`) VALUES ($id_u, $id_b , '0', '0', '1');");
+
+$mysqli->close();
+
+
 			   echo '
 <div class="content">
 		<div class="features-section">
@@ -193,8 +223,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <div class="products-section-grids">
 					<ul id="filters" class="clearfix">
 						<li><span class="filter" data-filter="app"><label></label><input value = "Читаю" onclick="alert(`Добавлено в читаю`)" type="button"></span></li>
-						<li><span class="filter" data-filter="card"><label></label><input value = "Буду читать" onclick="alert(`Добавлено в буду читать`)" type="button"></span></li>
-						<li><span class="filter" data-filter="icon"><label></label><input value = "Прочитано" onclick="alert(`Добавлено в прочитано`)" type="button"></span></li>
+						<li><span class="filter" data-filter="card"><label></label><input value = "Буду читать" onclick="now_read()" type="button"></span></li>
+						<li><span class="filter" data-filter="icon"><label></label><input value = "Прочитано" onclick="was_read()" type="button"></span></li>
 						</ul>';	
 ?>	
 <h3> Возможно вам также понравится:</h3>
@@ -234,4 +264,6 @@ for($i=0; $i<6;$i++){
 include 'footer.php';
 		?>
 </body>
+
 </html>
+
