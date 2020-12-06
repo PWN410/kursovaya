@@ -172,12 +172,14 @@ if ($result = $mysqli->query($query)) {
 $mysqli->close();
 for($i=0;$i<count($users);$i++)
 {
-	if($users[$i]["email"]==$_SESSION['email'])
+	 if(!isset($_SESSION['email']) && !isset($_SESSION['password']))
 	{
+		$id_u = 0;
+	}
+	else if($users[$i]["email"]==$_SESSION['email']){
 		$id_u = $users[$i]["id"];
 	}
-	else 
-		$id_u = 0;
+		
 }
 ?>
 <?php
@@ -223,8 +225,8 @@ $mysqli->close();
 <div class="products-section-grids">
 					<ul id="filters" class="clearfix">
 						<li><span class="filter" data-filter="app"><label></label><input value = "Читаю" onclick="alert(`Добавлено в читаю`)" type="button"></span></li>
-						<li><span class="filter" data-filter="card"><label></label><input value = "Буду читать" onclick="now_read()" type="button"></span></li>
-						<li><span class="filter" data-filter="icon"><label></label><input value = "Прочитано" onclick="was_read()" type="button"></span></li>
+						<li><span class="filter" data-filter="card"><label></label><input value = "Буду читать" onclick="alert(`Добавлено в буду читать`)" type="button"></span></li>
+						<li><span class="filter" data-filter="icon"><label></label><input value = "Прочитано" onclick="alert(`Добавлено в прочитано`)" type="button"></span></li>
 						</ul>';	
 ?>	
 <h3> Возможно вам также понравится:</h3>
