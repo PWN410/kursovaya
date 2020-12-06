@@ -191,7 +191,40 @@ if ($mysqli->connect_errno) {
 }
 
 $id_b = $array[0]["id"];
-$mysqli->query("INSERT INTO `cab` (`id_user`, `id_book`, `read_now`, `read_later`, `was_read`) VALUES ($id_u, $id_b , '0', '0', '1');");
+$mysqli->query("INSERT INTO `cab` (`id_user`, `id_book`, `read_now`, `read_later`, `was_read`) VALUES ($id_u, $id_b , '0', '1', '0');");
+
+$mysqli->close();
+//Скрипт для получения оверолл статистики
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+
+$query = "SELECT * FROM cab ORDER by ID";
+if ($result = $mysqli->query($query)) {
+	$row_cnt_cab = mysqli_num_rows($result);
+	$cab = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$cab[]=$row;
+    }
+    $result->free();
+}
+$count_read = 0;
+$count_wasRead = 0;
+$count_readLater = 0;
+
+
+for($i=0;$i<$row_cnt_cab;$i++){
+	if($cab[$i]["id_book"] == $id_b){
+if($cab[$i]["read_now"]==1)
+	$count_read+=1;
+else if ($cab[$i]["read_later"]==1)
+	$count_readLater += 1;
+else if ($cab[$i]["was_read"]==1)
+	$count_wasRead += 1;
+}
+}
 
 $mysqli->close();
 
@@ -213,7 +246,12 @@ $mysqli->close();
 				         <div class="grid_img">
 						   <div class="css3"><a href = "books/171987.a4.pdf"><img src="images/pic'.$array[0]["id"].'.jpg" alt=""/></a></div>
 	                    </div>
-	                    <h2>Просмотров: '.$array[0]["Views"].'</h2>
+	                    <div class="features-section-head text-center">
+	                    <h3>Просмотров: <span>'.$array[0]["Views"].'</span></h3>
+	                    <h3>Прочитано: <span>'.$count_wasRead.'</span></h3>
+	                    <h3>Читают: <span>'.$count_read.'</span></h3>
+	                    <h3>Будут читать: <span>'.$count_readLater.'</span></h3>
+	                    </div>
 	                    </div>
 	                    </div>
 </div>
