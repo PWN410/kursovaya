@@ -191,7 +191,7 @@ if ($mysqli->connect_errno) {
 }
 
 $id_b = $array[0]["id"];
-$mysqli->query("INSERT INTO `cab` (`id_user`, `id_book`, `read_now`, `read_later`, `was_read`) VALUES ($id_u, $id_b , '0', '1', '0');");
+//$mysqli->query("INSERT INTO `cab` (`id_user`, `id_book`, `read_now`, `read_later`, `was_read`) VALUES ($id_u, $id_b , '0', '1', '0');");
 
 $mysqli->close();
 //Скрипт для получения оверолл статистики
