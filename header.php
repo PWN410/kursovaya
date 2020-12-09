@@ -60,7 +60,7 @@ $mysqli->close();
                 <li><a href="products.php">Романы</a></li>
               </ul>
             </li>
-            <li class="active"><a href="news.php">Новости</a></li>
+            <li class="active"><a href="top.php">Топ книг</a></li>
             <li class="active"><a href="contact.php">Обратная связь</a></li>
             <?php
              if(!isset($_SESSION['email']) && !isset($_SESSION['password'])){?>

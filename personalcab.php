@@ -80,7 +80,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	                <li><a href="products.php">Романы</a></li>
 	              </ul>
 	            </li>
-            <li class="active"><a href="news.php">Новости</a></li>
+            <li class="active"><a href="top.php">Топ книг</a></li>
 	            <li class="active"><a href="contact.php">Обратная связь</a></li>
 	           <li class="active"><a href="personalcab.php">Личный кабинет</a></li>
 	          <div class="clearfix"></div>

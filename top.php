@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+$query = "SELECT * FROM catalogtest ORDER by avg_rtng DESC";
+if ($result = $mysqli->query($query)) {
+	$array = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$array[]=$row;
+    }
+
+    $result->free();
+}
+$mysqli->close();
+?>
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,7 +83,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	                <li><a href="products.php">Романы</a></li>
 	              </ul>
 	            </li>
-            <li class="active"><a href="news.php">Новости</a></li>
+            <li class="active"><a href="top.php">Топ книг</a></li>
 	            <li class="active"><a href="contact.php">Обратная связь</a></li>
 <?php
              if(!isset($_SESSION['email']) && !isset($_SESSION['password'])){?>
@@ -98,11 +121,45 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="clearfix"></div>
 			   </div>
 			   </div>
-<div class="content">
-		<div class="features-section">
+			   <div class="content">
+			<div class="features-section">
+				<div class="features-section-head text-center">
+					<h3><span>Н</span>аиболее популярные</h3>
+					</div>
+				</div>
+			</div>
+<div class="container">
+			<div class="products-section">
+				<div class="products-section-head text-center">
 			<div class="features-section-head text-center">
-			   <h2>Эта страницца на доработке. Приносим свои извенения</h2>
+			   <?php
+for($i=0; $i<6;$i++){
+	echo '
+						
+				   <div class="col_1_of_single1 span_1_of_single1">
+				     <div class="view1 view-fifth1">
+				  	  <div class="top_box">
+				  	  <div class="features-section-head text-center">
+				  	  <h2>Оценка:</h2> <h3><span>'.$array[$i]["avg_rtng"].'</span></h3>
+				  	  </div>
+					  	<h3 class="m_1">'.$array[$i]["Name"].'</h3>
+					  	<p class="m_2">'.$array[$i]["Category"].'</p>
+						<a href="/bookpage'.$array[$i]["id"].'.php">
+				         <div class="grid_img">
+						   <div class="css3"><img src="images/pic'.$array[$i]["id"].'.jpg" alt=""/></div>
+					          <div class="mask1">
+	                       		<div class="info">Перейти на страницу</div>
+			                  </div>
+	                    </div>
+					   </div>
+					    </div></a>	
+						</div>						
+			';
+}
+?>
 			</div>
 		</div>
 	</div>
+</div>
 </body>
+
