@@ -1,6 +1,7 @@
 <?php
 session_start();
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,9 +20,9 @@ if ($result = $mysqli->query($query)) {
 
     $result->free();
 }
-
 $mysqli->close();
 ?>
+
 <?php
 $mysqli = new mysqli("localhost", "root", "", "readontest");
 if ($mysqli->connect_errno) {
@@ -33,6 +34,7 @@ $mysqli->query("UPDATE catalogtest SET Views = Views + 1 WHERE id = $id");
 
 $mysqli->close();
 ?>
+
 <?php
 echo '
 <title>'.$array[3]["Name"].' - '.$array[3]["Author"].'</title>';
@@ -52,6 +54,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!--webfont-->
 <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,100italic,300italic,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
 <!-- dropdown -->
+
 <script src="js/jquery.easydropdown.js"></script>
 <link href="css/nav.css" rel="stylesheet" type="text/css" media="all"/>
 <script type="text/javascript" src="js/hover_pack.js"></script>
@@ -120,7 +123,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
               echo'
             <li class="active"><a href="personalcab.php">Личный кабинет</a></li>';}
             ?>
-           <div class="clearfix"></div>
+	          <div class="clearfix"></div>
 	        </ul>
 	  </div>
 	 </div>
@@ -151,8 +154,112 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="clearfix"></div>
 			   </div>
 			   </div>
-			   <?php
-			   
+			   <?php 
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+$query = "SELECT * FROM users ORDER by ID";
+if ($result = $mysqli->query($query)) {
+	$users = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$users[]=$row;
+    }
+
+    $result->free();
+}
+$mysqli->close();
+for($i=0;$i<count($users);$i++)
+{
+	 if(!isset($_SESSION['email']) && !isset($_SESSION['password']))
+	{
+		$id_u = 0;
+	}
+	else if($users[$i]["email"]==$_SESSION['email']){
+		$id_u = $users[$i]["id"];
+	}
+		
+}
+?>
+<?php
+
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+
+$id_b = $array[3]["id"];
+//$mysqli->query("INSERT INTO `cab` (`id_user`, `id_book`, `read_now`, `read_later`, `was_read`) VALUES ($id_u, $id_b , '0', '1', '0');");
+
+$mysqli->close();
+//Скрипт для получения оверолл статистики
+$mysqli = new mysqli("localhost", "root", "", "readontest");
+if ($mysqli->connect_errno) {
+    printf("Соединение не удалось: %s\n", $mysqli->connect_error);
+    exit();
+}
+
+$query = "SELECT * FROM cab ORDER by ID";
+if ($result = $mysqli->query($query)) {
+	$row_cnt_cab = mysqli_num_rows($result);
+	$cab = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$cab[]=$row;
+    }
+    $result->free();
+}
+$count_read = 0;
+$count_wasRead = 0;
+$count_readLater = 0;
+
+
+for($i=0;$i<$row_cnt_cab;$i++){
+	if($cab[$i]["id_book"] == $id_b){
+if($cab[$i]["read_now"]==1)
+	$count_read+=1;
+else if ($cab[$i]["read_later"]==1)
+	$count_readLater += 1;
+else if ($cab[$i]["was_read"]==1)
+	$count_wasRead += 1;
+}
+}
+
+
+
+//скрипт для оценки
+
+$query = "SELECT * FROM rating ORDER by ID";
+if ($result = $mysqli->query($query)) {
+	$row_cnt_rtng = mysqli_num_rows($result);
+	$rating = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$rating[]=$row;
+    }
+
+    $result->free();
+}
+$avr_rtng = 0;
+$rtng_cnt = 0;
+$my_rtng = 0;
+for($i=0;$i<$row_cnt_rtng;$i++){
+	if($rating[$i]["id_book"] == $id_b){
+		$avr_rtng+=$rating[$i]["rating"];
+		$rtng_cnt+=1;
+		if($rating[$i]["id_user"] == $id_u)
+			$my_rtng = $rating[$i]["rating"];
+	}
+}
+if($rtng_cnt != 0)
+	$avr_rtng = round($avr_rtng / $rtng_cnt, 2);
+
+$mysqli->close();
+
+
+
+
+
 			   echo '
 <div class="content">
 		<div class="features-section">
@@ -167,10 +274,30 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				   <div class="col_1_of_single1 span_1_of_single1">
 				     <div class="view1 view-fifth1">
 				  	  <div class="top_box">
+				  	  <div class="features-section-head text-center">
+				  	  <h3>Оценка: <span>'.$avr_rtng.'</span></h3>
+				  	  </div>
 				         <div class="grid_img">
-						   <div class="css3"><a href = "books/romeo-i-dzhuletta.pdf"<img src="images/pic'.$array[3]["id"].'.jpg" alt=""/></a></div>
+						   <div class="css3"><a href = "books/171987.a4.pdf"><img src="images/pic'.$array[3]["id"].'.jpg" alt=""/></a></div>
 	                    </div>
-	                    <h2>Просмотров: '.$array[3]["Views"].'</h2>
+	                    <div class="features-section-head text-center">
+	                    <h2>Ваша оценка: '.$my_rtng.'</h2>
+	                    <form action="rating_script.php" method="post">
+	                    <p><select size="1" name = "rtn">
+	                    <option disabled>Поставьте оценку</option>
+	                    <option selected value="1">1</option>
+	                    <option value="2">2</option>
+	                    <option value="3">3</option>
+	                    <option value="4">4</option>
+	                    <option value="5">5</option>
+	                    </select></p>
+	                    <p><input type="submit" value="Отправить"></p>
+	                    </form>
+	                    <h3>Просмотров: <span>'.$array[3]["Views"].'</span></h3>
+	                    <h3>Прочитано: <span>'.$count_wasRead.'</span></h3>
+	                    <h3>Читают: <span>'.$count_read.'</span></h3>
+	                    <h3>Будут читать: <span>'.$count_readLater.'</span></h3>
+	                    </div>
 	                    </div>
 	                    </div>
 </div>
@@ -223,4 +350,6 @@ for($i=0; $i<6;$i++){
 include 'footer.php';
 		?>
 </body>
+
 </html>
+

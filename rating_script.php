@@ -49,6 +49,6 @@ $mysqli->query("INSERT INTO `rating` (`id_user`, `id_book`, `rating`) VALUES ($i
 $mysqli->close();
 
 header("HTTP/1.1 301 Moved Permanently");
-header("Location: ".$address_site."/bookpage1.php");
+header("Location: ".$address_site."/bookpage".$id_b.".php");
 ?>
 
