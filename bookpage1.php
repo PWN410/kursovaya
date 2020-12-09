@@ -226,7 +226,38 @@ else if ($cab[$i]["was_read"]==1)
 }
 }
 
+
+
+//скрипт для оценки
+
+$query = "SELECT * FROM rating ORDER by ID";
+if ($result = $mysqli->query($query)) {
+	$row_cnt_rtng = mysqli_num_rows($result);
+	$rating = array ();
+    while ($row = $result->fetch_assoc()) {
+        	$rating[]=$row;
+    }
+
+    $result->free();
+}
+$avr_rtng = 0;
+$rtng_cnt = 0;
+$my_rtng = 0;
+for($i=0;$i<$row_cnt_rtng;$i++){
+	if($rating[$i]["id_book"] == $id_b){
+		$avr_rtng+=$rating[$i]["rating"];
+		$rtng_cnt+=1;
+		if($rating[$i]["id_user"] == $id_u)
+			$my_rtng = $rating[$i]["rating"];
+	}
+}
+if($rtng_cnt != 0)
+	$avr_rtng = round($avr_rtng / $rtng_cnt, 2);
+
 $mysqli->close();
+
+
+
 
 
 			   echo '
@@ -243,10 +274,25 @@ $mysqli->close();
 				   <div class="col_1_of_single1 span_1_of_single1">
 				     <div class="view1 view-fifth1">
 				  	  <div class="top_box">
+				  	  <div class="features-section-head text-center">
+				  	  <h3>Оценка: <span>'.$avr_rtng.'</span></h3>
+				  	  </div>
 				         <div class="grid_img">
 						   <div class="css3"><a href = "books/171987.a4.pdf"><img src="images/pic'.$array[0]["id"].'.jpg" alt=""/></a></div>
 	                    </div>
 	                    <div class="features-section-head text-center">
+	                    <h2>Ваша оценка: '.$my_rtng.'</h2>
+	                    <form action="rating_script.php" method="post">
+	                    <p><select size="1" name = "rtn">
+	                    <option disabled>Поставьте оценку</option>
+	                    <option selected value="1">1</option>
+	                    <option value="2">2</option>
+	                    <option value="3">3</option>
+	                    <option value="4">4</option>
+	                    <option value="5">5</option>
+	                    </select></p>
+	                    <p><input type="submit" value="Отправить"></p>
+	                    </form>
 	                    <h3>Просмотров: <span>'.$array[0]["Views"].'</span></h3>
 	                    <h3>Прочитано: <span>'.$count_wasRead.'</span></h3>
 	                    <h3>Читают: <span>'.$count_read.'</span></h3>
